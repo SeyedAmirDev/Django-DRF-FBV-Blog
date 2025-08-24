@@ -3,6 +3,9 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
+from .models import Profile
+
+
 User = get_user_model()
 
 
@@ -40,7 +43,7 @@ class CustomUserAdmin(UserAdmin):
 
     add_fieldsets = (
         (
-            None,
+            _('Add User'),
             {
                 "classes": ("wide",),
                 "fields": ("email", "is_staff", "is_active", "is_superuser",
@@ -48,3 +51,48 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        "pk", "first_name", "last_name", "get_user_email"
+    )
+    search_fields = ("first_name", "last_name")
+
+    fieldsets = (
+        (_('Profile Info'), {"fields": (
+            "user",
+            "first_name",
+            "last_name",
+            "image",
+            "description"
+        )}),
+        (_("Important dates"), {"fields": ("created_date", "updated_date")}),
+    )
+
+    readonly_fields = ("created_date", "updated_date")
+
+    add_fieldsets = (
+        (
+            _('Add Profile'),
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "user",
+                    "first_name",
+                    "last_name",
+                    "image",
+                    "description"
+                )
+            },
+        ),
+    )
+
+    def get_user_email(self, instance):
+        return instance.user.email
+
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return self.add_fieldsets
+        return super().get_fieldsets(request, obj)
