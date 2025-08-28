@@ -1,2 +1,2 @@
-# Django-Advance-Blog
-This is the django project for advance blog
+# Django-DRF-FBV-Blog
+ A Django REST Framework project demonstrating function-based views for a simple blog API. 
